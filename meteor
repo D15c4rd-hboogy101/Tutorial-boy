@@ -1,0 +1,98 @@
+--just replace "hboogy101" with your username.. the script will fit
+
+User = game.Workspace:WaitForChild("hboogy101")
+local TweenService = game:GetService("TweenService")
+
+if User["Left Leg"] == nil then
+	error("You need a left leg for this don't ask")
+end
+
+User["Left Leg"].Touched:wait()
+
+local Goodbye = Instance.new("Sound")
+Goodbye.SoundId = "rbxassetid://1272003025"
+Goodbye.Volume = 1
+Goodbye.Parent = game.Workspace
+Goodbye:Play()
+
+local alarm = Instance.new("Sound")
+alarm.SoundId = "rbxassetid://224281318"
+alarm.Looped = true
+alarm.PlaybackSpeed = 0.8
+alarm.Volume = 2
+alarm.Parent = game.Workspace
+alarm:Play()
+
+local Meteor = Instance.new("Part")
+Meteor.Shape = "Ball"
+Meteor.Size = Vector3.new(58.6, 58.6, 58.6)
+Meteor.Anchored = true
+Meteor.CFrame = CFrame.new(User.Torso.CFrame.X + math.random(-230, 230), User.Torso.CFrame.Y + 300, User.Torso.CFrame.Z + math.random(-230, 230))
+Meteor.Parent = game.Workspace
+
+local MeteorMesh = Instance.new("SpecialMesh")
+MeteorMesh.MeshId = "rbxassetid://1290033"
+MeteorMesh.TextureId = "rbxassetid://70395557"
+MeteorMesh.Scale = Vector3.new(40, 40, 40)
+MeteorMesh.Parent = Meteor
+
+local MeteorParticle = Instance.new("ParticleEmitter")
+MeteorParticle.Texture = "rbxasset://textures/particles/fire_main.dds"
+MeteorParticle.LightInfluence = 1
+MeteorParticle.Acceleration = Vector3.new(0, 10, 0)
+MeteorParticle.Lifetime = NumberRange.new(5)
+MeteorParticle.Rate = 100
+MeteorParticle.RotSpeed = NumberRange.new(46)
+MeteorParticle.Speed = NumberRange.new(5)
+MeteorParticle.Color = ColorSequence.new(Color3.new(255,0,0), Color3.new(0,0,0))
+MeteorParticle.Size = NumberSequence.new(10, 0)
+MeteorParticle.Parent = Meteor
+
+
+local PassingWind = Instance.new("Sound")
+PassingWind.SoundId = "rbxassetid://167123203"
+PassingWind.Looped = true
+PassingWind.Volume = 4
+PassingWind.Parent = Meteor
+PassingWind:Play()
+
+towards = {}
+towards.CFrame = User.Torso.CFrame * CFrame.new(0, 5, 0)
+
+local Move = TweenService:Create(Meteor, TweenInfo.new(10, Enum.EasingStyle.Linear), towards)
+Move:Play()
+
+Meteor.Touched:Connect(function(part)
+	if part ~= nil then
+		if part.ClassName == "Part" then
+			part:BreakJoints()
+		end
+	end
+end)
+
+explosionsounds = {2101159, 2101157, 1994345, 110284742, 315775189}
+
+Move.Completed:Connect(function()
+	Meteor.Sound:Remove()
+	alarm:Remove()
+	for i, v in pairs(explosionsounds) do
+	local soundfirst = explosionsounds[math.random(1, #explosionsounds)]
+	table.remove(explosionsounds, soundfirst)
+	local soundsecond = explosionsounds[math.random(1, #explosionsounds)]
+	local Noise = Instance.new("Sound")
+	Noise.SoundId = "rbxassetid://"..soundfirst
+	Noise.PlayOnRemove = true
+	Noise.Parent = game.Workspace
+	Noise:Remove()
+	local again = Instance.new("Sound")
+	again.SoundId = "rbxassetid://"..soundsecond
+	again.PlayOnRemove = true
+	again.Parent = game.Workspace
+	again:Remove()
+	local Explosion = Instance.new("Explosion")
+	Explosion.BlastPressure = 20
+	Explosion.BlastRadius = 70.6, 70.6, 70.6
+	Explosion.Position = Meteor.Position
+	Explosion.Parent = Meteor
+end
+end)
